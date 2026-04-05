@@ -1,0 +1,618 @@
+Here is the **exact byDebut UI flow** for the core loop:
+
+# Create → Review → Rank → Fork
+
+This is designed so the user does not just “post an idea,” but moves through a **structured narrative evolution system**.
+
+---
+
+# 1. ENTRY SCREEN
+
+## Page: `Variation Lab`
+
+### Goal
+
+Let the user start from:
+
+* original story
+* existing ranked variation
+* blank exploration prompt
+
+### UI blocks
+
+**Header**
+
+* Project / Story title
+* current branch name
+* status badge: `Draft`, `In Review`, `Ranked`, `Forked`
+
+**Primary actions**
+
+* `Create New Variation`
+* `Browse Ranked Variations`
+* `Continue Draft`
+
+**Left panel**
+
+* Story tree / branch map
+* Original work at top
+* child variations below it
+
+**Main panel**
+
+* Selected node preview
+* summary
+* score snapshot
+* number of reviews
+* last activity
+
+---
+
+# 2. CREATE FLOW
+
+## Page: `Create Variation`
+
+### Goal
+
+Force the creator to define the change clearly, not vaguely.
+
+## Step 1 — Select Source
+
+### UI
+
+* card selector:
+
+  * `Original Version`
+  * `Ranked Variation`
+  * `My Previous Draft`
+
+If `Ranked Variation` is selected:
+
+* open searchable ranked list
+* each card shows:
+
+  * title
+  * branch id
+  * score
+  * strongest dimensions
+  * fork count
+
+### CTA
+
+* `Use this as source`
+
+---
+
+## Step 2 — Define the Variable Change
+
+### UI form
+
+**Field 1:** `What variable are you changing?`
+
+* short input
+* example placeholder:
+
+  * “Jean Valjean never receives mercy”
+  * “The immortal character cannot forget”
+
+**Field 2:** `Type of change`
+
+* dropdown:
+
+  * character trait
+  * decision
+  * social rule
+  * environmental condition
+  * time condition
+  * moral constraint
+  * other
+
+**Field 3:** `Describe the change clearly`
+
+* larger text box
+* must explain the rule in one paragraph
+
+**Field 4:** `Why does this change matter?`
+
+* text box
+
+**Field 5:** `Expected narrative effect`
+
+* checklist + optional note:
+
+  * stronger conflict
+  * system instability
+  * emotional shift
+  * moral inversion
+  * alternate ending
+  * new character arc
+
+**Field 6:** `Confidence level`
+
+* slider:
+
+  * exploratory
+  * plausible
+  * strong
+  * highly defensible
+
+### Right-side live panel
+
+Shows:
+
+* source summary
+* changed variable summary
+* expected downstream effects
+
+### CTA
+
+* `Generate Draft Variation`
+
+---
+
+## Step 3 — Draft the Variation
+
+### UI layout
+
+Two-column editor
+
+**Left column**
+
+* source version excerpt / baseline summary
+* locked for reference
+
+**Right column**
+
+* editable variation draft
+
+### Top controls
+
+* `Narrative Summary`
+* `Scene Changes`
+* `Character Effects`
+* `System Consequences`
+
+These are tabs inside the editor.
+
+### Required sections
+
+The user cannot submit until these are completed:
+
+1. **Variation Summary**
+2. **What changed from source**
+3. **Immediate consequences**
+4. **Long-term consequences**
+5. **Why this version deserves evaluation**
+
+### Bottom actions
+
+* `Save Draft`
+* `Preview Structured Diff`
+* `Submit for Review`
+
+---
+
+# 3. PRE-REVIEW CHECK
+
+## Modal: `Validation Gate`
+
+Before entering review, the platform checks for completeness.
+
+### Checklist shown to creator
+
+* source version selected
+* variable change defined
+* causal consequence explained
+* long-term effect explained
+* comparison ready
+
+If something is missing:
+
+* red warning
+* direct jump link to incomplete section
+
+If complete:
+
+* `Submit to Review`
+
+---
+
+# 4. REVIEW FLOW
+
+## Page: `Review Variation`
+
+### Goal
+
+Make reviewers evaluate through structured lenses, not casual opinion.
+
+## Layout
+
+**Top header**
+
+* Variation title
+* source branch
+* creator name
+* review deadline / stage
+* current number of reviews
+
+**Main body: 3-column layout**
+
+### Left column — Source
+
+* source summary
+* key premise
+* major constraints
+
+### Center column — Candidate Variation
+
+* full summary
+* highlighted changed variable
+* creator rationale
+
+### Right column — Review Form
+
+Structured scoring only
+
+---
+
+## Review form sections
+
+### Section A — Quick score
+
+Rate 1–10:
+
+* Narrative coherence
+* Internal logic
+* Emotional power
+* Originality
+* Long-term sustainability
+* Adaptation potential
+
+### Section B — Reviewer lens
+
+Reviewer must choose role:
+
+* Skeptic
+* Defender
+* Systems Thinker
+* Audience Proxy
+* Character Analyst
+* Adaptation Judge
+
+This affects prompts shown below.
+
+### Section C — Structured critique
+
+**Prompt 1:** strongest element
+**Prompt 2:** weakest element
+**Prompt 3:** where the variation becomes unstable
+**Prompt 4:** what should not be changed
+**Prompt 5:** whether this version improves on the source
+
+### Section D — Evidence tagging
+
+Reviewer can tag specific issues:
+
+* contradiction
+* shallow motivation
+* weak payoff
+* strong escalation
+* better thematic clarity
+* more cinematic
+* emotionally weaker
+* stronger structure
+
+### Section E — Recommendation
+
+Choose one:
+
+* advance to ranking
+* revise before ranking
+* reject for now
+
+### CTA
+
+* `Submit Review`
+
+---
+
+# 5. CREATOR RESPONSE FLOW
+
+## Page section: `Review Responses`
+
+### Goal
+
+The creator does not passively obey reviews. They must show discernment.
+
+Each review appears as a structured card.
+
+### For each review item, creator chooses:
+
+* `Accept`
+* `Reject`
+* `Partially Accept`
+
+### Required mini-justification
+
+Short response field:
+
+* why accepted
+* why rejected
+* what will change
+
+### Bottom actions
+
+* `Revise Draft`
+* `Send to Ranking`
+* `Request More Reviews`
+
+This is crucial because it prevents the system from becoming “whoever argued best wins.”
+
+---
+
+# 6. RANK FLOW
+
+## Page: `Ranked Variations Board`
+
+### Goal
+
+Turn many reviewed variations into a visible competitive intelligence layer.
+
+## Main layout
+
+Table + cards toggle
+
+### Columns
+
+* Rank
+* Variation title
+* Source branch
+* Overall score
+* Coherence
+* Originality
+* Stability
+* Emotional impact
+* Review count
+* Fork count
+* Status
+
+### Filters
+
+* by story
+* by branch
+* by score range
+* by reviewer consensus
+* by most forked
+* by newest
+* by cinematic potential
+
+### Sort options
+
+* highest overall
+* most original
+* most stable
+* most debated
+* best adaptation potential
+
+---
+
+## Variation rank detail drawer
+
+When a variation is clicked, a side panel opens with:
+
+* score radar
+* review consensus summary
+* strongest comments
+* biggest disagreements
+* creator defense summary
+* source lineage
+
+### Main CTAs
+
+* `Open Full Comparison`
+* `Fork This Variation`
+* `View Branch Tree`
+
+---
+
+# 7. FORK FLOW
+
+## Page / Modal: `Fork Ranked Variation`
+
+### Goal
+
+Enable branch creation from a high-quality version without losing lineage.
+
+## UI
+
+**Top block**
+
+* parent variation card
+* rank badge
+* score snapshot
+* creator
+* why it ranked high
+
+**Fork form**
+**Field 1:** `New branch title`
+**Field 2:** `What new variable will you change now?`
+**Field 3:** `What are you preserving from the parent variation?`
+**Field 4:** `What are you intentionally disrupting?`
+
+### Visual lineage preview
+
+Shows:
+`Original → Ranked Variation #4 → Your New Fork`
+
+### CTA
+
+* `Create Fork`
+
+After click:
+
+* system duplicates parent context
+* locks inherited rationale into reference panel
+* opens creator in new branch draft screen
+
+---
+
+# 8. COMPARISON VIEW
+
+## Page: `Variation Comparison`
+
+This is where byDebut becomes truly powerful.
+
+## Layout
+
+Side-by-side comparison
+
+### Left card
+
+Parent / source variation
+
+### Right card
+
+Current variation or fork
+
+### Center diff lane
+
+Shows:
+
+* changed variable
+* narrative consequences
+* emotional shift
+* structural gain/loss
+* stability gain/loss
+
+### Tabs
+
+* Summary
+* Character impact
+* World/system impact
+* Ending divergence
+* Reviewer verdicts
+
+### Bottom panel
+
+`Which version is stronger, and why?`
+This is displayed from structured reviewer synthesis, not freeform noise.
+
+### CTAs
+
+* `Vote`
+* `Review`
+* `Fork right version`
+* `Return to rankings`
+
+---
+
+# 9. IDEAL USER JOURNEY
+
+A strong first-user path should be:
+
+### Flow
+
+1. User opens `Variation Lab`
+2. Clicks `Browse Ranked Variations`
+3. Opens one strong variation
+4. Clicks `Fork This Variation`
+5. Defines one new variable
+6. Drafts the new branch
+7. Submits it for review
+8. Receives structured critiques
+9. Accepts/rejects feedback
+10. Sends to ranking
+11. Variation enters leaderboard
+12. Other users fork it again
+
+This creates:
+
+* creative evolution
+* visible lineage
+* merit-based discovery
+* system-level storytelling
+
+---
+
+# 10. MINIMUM MVP SCREENS
+
+For MVP, build only these first:
+
+1. `Variation Lab`
+2. `Create Variation`
+3. `Review Variation`
+4. `Ranked Variations Board`
+5. `Fork Ranked Variation`
+6. `Comparison View`
+
+That is enough to demonstrate the entire product logic to users, judges, writers, and film reviewers.
+
+---
+
+# 11. MOST IMPORTANT UI PRINCIPLE
+
+Every screen should always show three things:
+
+* **what version this came from**
+* **what variable changed**
+* **why this version is stronger or weaker**
+
+That is the heart of byDebut.
+
+---
+
+# 12. BEST DATA OBJECTS BEHIND THIS FLOW
+
+Your frontend should already think in these objects:
+
+* `Story`
+* `Variation`
+* `SourceVariationId`
+* `ForkParentId`
+* `VariableChange`
+* `Review`
+* `ScoreDimension`
+* `RankingEntry`
+* `ComparisonPair`
+* `BranchLineage`
+
+---
+
+# 13. RECOMMENDED SCREEN ORDER FOR KIRO BUILD
+
+Tell KIRO to implement in this order:
+
+### Phase 1
+
+* Variation Lab
+* Create Variation
+* local state only
+* mock data
+
+### Phase 2
+
+* Review Variation
+* structured scoring form
+* review cards
+
+### Phase 3
+
+* Ranked Variations Board
+* filters
+* sort
+* rank detail drawer
+
+### Phase 4
+
+* Fork flow
+* lineage preview
+* branch creation
+
+### Phase 5
+
+* Comparison View
+* side-by-side analysis
+* diff blocks
+
+---
+

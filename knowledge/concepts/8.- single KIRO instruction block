@@ -1,0 +1,591 @@
+KIRO — FIRST MASTER INSTRUCTION BLOCK
+PROJECT: byDebut
+GOAL: Build the first functional frontend prototype of the byDebut core system based on the interaction loop:
+Create → Review → Rank → Fork → Compare
+
+IMPORTANT:
+This is a new project. Treat this instruction as the foundational product and UX definition.
+Do not simplify the concept into a generic writing app, forum, or document editor.
+byDebut is a narrative variation system where users modify one variable of a story, submit the variation for structured review, rank competing versions, and fork from strong ranked variations to create new branches.
+
+==================================================
+1. PRODUCT IDENTITY
+==================================================
+
+byDebut is a structured creative intelligence platform for narrative evolution.
+
+The product is not just for writing stories.
+It is for:
+- proposing a change in a story variable
+- exploring the consequences of that change
+- evaluating whether that variation is stronger or weaker
+- ranking versions based on structured review
+- allowing users to fork from ranked variations and continue the branch
+
+Core principle:
+The platform must always make visible:
+1. what version this came from
+2. what variable changed
+3. why this version is stronger or weaker
+
+This first build is frontend-first and must be jury-ready in look and behavior.
+It must feel like a serious product, not a rough prototype.
+
+==================================================
+2. PRIMARY MVP OBJECTIVE
+==================================================
+
+Build the first end-to-end frontend flow of byDebut with mock data and clean local state.
+
+The MVP must include these screens:
+
+1. Variation Lab
+2. Create Variation
+3. Review Variation
+4. Ranked Variations Board
+5. Fork Ranked Variation
+6. Comparison View
+
+The app must let a user:
+- browse a story and its branches
+- select a source version
+- define a variable change
+- draft a new variation
+- submit it into a structured review flow
+- view ranked variations
+- fork from a ranked variation
+- compare parent vs child variation side by side
+
+Do not wait for backend integration.
+Use mock data, clear types, reusable components, and predictable state.
+
+==================================================
+3. TECH STACK EXPECTATION
+==================================================
+
+Unless the workspace already imposes another stack, use:
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- component-driven architecture
+- local mock JSON or TS seed data
+- React Router for page navigation
+- clean reusable cards, tables, drawers, tabs, badges, and forms
+
+If shadcn/ui is available or easy to add, use it.
+If not, create lightweight clean reusable UI primitives.
+
+No heavy backend work in this first pass.
+No auth.
+No database.
+No external APIs.
+
+==================================================
+4. DESIGN DIRECTION
+==================================================
+
+The interface must look like a professional narrative intelligence platform.
+
+Visual direction:
+- dark or dark-neutral editorial product style
+- cinematic but clean
+- modern, high-trust, jury-ready
+- spacious layout
+- strong typography hierarchy
+- cards, panels, branch indicators, score badges, and structured sections
+- avoid visual clutter
+- no childish colors or social-media style noise
+
+The product should feel like:
+- creative analysis software
+- narrative strategy platform
+- version intelligence workspace
+
+Emphasize:
+- lineage
+- structure
+- evaluation
+- consequence
+- comparison
+
+==================================================
+5. INFORMATION ARCHITECTURE
+==================================================
+
+The main conceptual objects in the UI are:
+
+- Story
+- Variation
+- Branch lineage
+- Variable change
+- Review
+- Score dimensions
+- Ranking entry
+- Comparison pair
+
+The app should be organized so these relationships are visually clear.
+
+Suggested top-level routes:
+- /                     -> Variation Lab
+- /create               -> Create Variation
+- /review/:variationId  -> Review Variation
+- /rankings             -> Ranked Variations Board
+- /fork/:variationId    -> Fork Ranked Variation
+- /compare/:left/:right -> Comparison View
+
+==================================================
+6. SCREEN REQUIREMENTS
+==================================================
+
+----------------------------------------
+A. VARIATION LAB
+----------------------------------------
+
+Purpose:
+This is the command center of the project.
+
+Requirements:
+- header with story title, branch context, and status badge
+- left panel with branch tree / lineage map
+- main panel with selected variation preview
+- actions:
+  - Create New Variation
+  - Browse Ranked Variations
+  - Continue Draft
+- selected node card should show:
+  - variation title
+  - source version
+  - changed variable
+  - short summary
+  - score snapshot
+  - number of reviews
+  - fork count
+  - status
+
+Behavior:
+- clicking a node updates the main preview
+- clicking actions routes correctly
+- use mock branch data with at least one original story and several child variations
+
+----------------------------------------
+B. CREATE VARIATION
+----------------------------------------
+
+Purpose:
+Force the creator to define the change precisely.
+
+Must include the following steps in one guided flow or stepper:
+
+Step 1: Select Source
+- options:
+  - Original Version
+  - Ranked Variation
+  - My Previous Draft
+- if Ranked Variation is selected:
+  - show searchable or scrollable variation cards
+  - each card includes score and fork count
+
+Step 2: Define Variable Change
+Fields:
+- What variable are you changing?
+- Type of change
+- Describe the change clearly
+- Why does this change matter?
+- Expected narrative effect
+- Confidence level
+
+Type of change options:
+- character trait
+- decision
+- social rule
+- environmental condition
+- time condition
+- moral constraint
+- other
+
+Expected narrative effect options:
+- stronger conflict
+- system instability
+- emotional shift
+- moral inversion
+- alternate ending
+- new character arc
+
+Right-side reference panel:
+- source summary
+- changed variable summary
+- expected downstream effects
+
+Step 3: Draft the Variation
+Two-column layout:
+- left = source reference
+- right = editable draft area
+
+Required sections:
+- Variation Summary
+- What changed from source
+- Immediate consequences
+- Long-term consequences
+- Why this version deserves evaluation
+
+Actions:
+- Save Draft
+- Preview Structured Diff
+- Submit for Review
+
+Validation Gate:
+Before submission, show a completeness checklist.
+Block submission if required sections are incomplete.
+
+----------------------------------------
+C. REVIEW VARIATION
+----------------------------------------
+
+Purpose:
+Reviewers evaluate through structured lenses, not vague opinion.
+
+Layout:
+- top summary header
+- three-column layout:
+  - source
+  - candidate variation
+  - review form
+
+Review form requirements:
+
+Quick scores from 1 to 10:
+- Narrative coherence
+- Internal logic
+- Emotional power
+- Originality
+- Long-term sustainability
+- Adaptation potential
+
+Reviewer lens selector:
+- Skeptic
+- Defender
+- Systems Thinker
+- Audience Proxy
+- Character Analyst
+- Adaptation Judge
+
+Structured critique prompts:
+- strongest element
+- weakest element
+- where the variation becomes unstable
+- what should not be changed
+- whether this version improves on the source
+
+Evidence tags:
+- contradiction
+- shallow motivation
+- weak payoff
+- strong escalation
+- better thematic clarity
+- more cinematic
+- emotionally weaker
+- stronger structure
+
+Recommendation:
+- advance to ranking
+- revise before ranking
+- reject for now
+
+Also include creator response cards below or in a separate section:
+For each review item, creator can choose:
+- Accept
+- Reject
+- Partially Accept
+with a short required justification field
+
+----------------------------------------
+D. RANKED VARIATIONS BOARD
+----------------------------------------
+
+Purpose:
+Show reviewed variations as a competitive and interpretable system.
+
+Must support:
+- table view
+- card view toggle
+- filters
+- sort controls
+
+Columns or card fields:
+- Rank
+- Variation title
+- Source branch
+- Overall score
+- Coherence
+- Originality
+- Stability
+- Emotional impact
+- Review count
+- Fork count
+- Status
+
+Filters:
+- by story
+- by branch
+- by score range
+- by reviewer consensus
+- by most forked
+- by newest
+- by cinematic potential
+
+Sort options:
+- highest overall
+- most original
+- most stable
+- most debated
+- best adaptation potential
+
+When clicking a ranking entry:
+Open a detail drawer or side panel with:
+- score radar or score summary blocks
+- consensus summary
+- strongest comments
+- biggest disagreements
+- creator defense summary
+- source lineage
+
+Actions in drawer:
+- Open Full Comparison
+- Fork This Variation
+- View Branch Tree
+
+----------------------------------------
+E. FORK RANKED VARIATION
+----------------------------------------
+
+Purpose:
+Allow branching from a strong ranked version while preserving lineage.
+
+Requirements:
+Top parent card shows:
+- title
+- rank badge
+- score snapshot
+- creator
+- reason it ranked high
+
+Fork form fields:
+- New branch title
+- What new variable will you change now?
+- What are you preserving from the parent variation?
+- What are you intentionally disrupting?
+
+Show lineage preview:
+Original → Ranked Variation → New Fork
+
+Action:
+- Create Fork
+
+Behavior after create:
+- route user into create/draft state for the new fork
+- inherited parent context must remain visible in a reference panel
+
+----------------------------------------
+F. COMPARISON VIEW
+----------------------------------------
+
+Purpose:
+This is the proof screen of the platform.
+It must make narrative difference legible.
+
+Layout:
+- side-by-side comparison
+- left = parent/source variation
+- right = selected variation/fork
+- center or inline diff blocks showing key change
+
+Must show:
+- changed variable
+- narrative consequences
+- emotional shift
+- structural gain/loss
+- stability gain/loss
+
+Tabs:
+- Summary
+- Character impact
+- World/system impact
+- Ending divergence
+- Reviewer verdicts
+
+Bottom section:
+A synthesized “Which version is stronger, and why?” area based on mock structured review data.
+
+Actions:
+- Vote
+- Review
+- Fork right version
+- Return to rankings
+
+==================================================
+7. MOCK DATA REQUIREMENTS
+==================================================
+
+Create realistic mock data for at least one story world.
+
+Use a serious literary example structure, not random placeholder text.
+
+Minimum dataset:
+- 1 original story
+- 4 to 6 variations
+- 2 ranked variations
+- 1 forked child from a ranked variation
+- 3 to 5 mock reviews per ranked variation
+- score dimensions for each reviewed variation
+- enough branch structure to demonstrate lineage visually
+
+Mock data should include:
+- titles
+- summaries
+- changed variables
+- consequences
+- scores
+- review comments
+- reviewer roles
+- ranking positions
+- fork counts
+
+==================================================
+8. COMPONENT REQUIREMENTS
+==================================================
+
+Build reusable components for:
+- App shell
+- Story header
+- Status badge
+- Variation card
+- Ranked variation card
+- Branch tree
+- Lineage path
+- Score badge
+- Score grid
+- Review card
+- Review form
+- Evidence tag group
+- Comparison panel
+- Diff block
+- Detail drawer
+- Empty state
+- Stepper or guided create flow
+
+Keep components modular and typed.
+
+==================================================
+9. STATE MANAGEMENT
+==================================================
+
+Use simple clean state management.
+Preferred order:
+- local component state where possible
+- lifted state
+- lightweight context only if needed
+
+Do not overengineer.
+But make the codebase easy to later connect to a backend.
+
+All major objects should have clean TypeScript interfaces.
+
+==================================================
+10. DELIVERABLE EXPECTATION
+==================================================
+
+At the end of this first execution pass, I want:
+
+1. A running frontend app
+2. All six MVP screens navigable
+3. Mock data powering the UI
+4. Clean reusable typed components
+5. A polished product-like visual experience
+6. A clear feeling that this is a real narrative evaluation platform
+
+==================================================
+11. IMPLEMENTATION ORDER
+==================================================
+
+Build in this order:
+
+Phase 1
+- app shell
+- routes
+- types
+- mock data
+- Variation Lab
+
+Phase 2
+- Create Variation flow
+- validation gate
+- structured diff preview placeholder
+
+Phase 3
+- Review Variation page
+- structured scoring form
+- creator response section
+
+Phase 4
+- Ranked Variations Board
+- filters, sorting, detail drawer
+
+Phase 5
+- Fork Ranked Variation flow
+- lineage preview
+- inherited context panel
+
+Phase 6
+- Comparison View
+- side-by-side presentation
+- structured verdict area
+
+Phase 7
+- polish
+- empty states
+- responsive behavior
+- visual consistency pass
+
+==================================================
+12. NON-NEGOTIABLE PRODUCT RULES
+==================================================
+
+Do not convert this into:
+- a generic blog editor
+- a fanfiction feed
+- a plain review table
+- a social posting app
+- an unstructured commenting system
+
+This product must feel structured and intentional.
+
+Every important variation view must show:
+- parent/source
+- changed variable
+- evaluation signal
+
+The platform is about disciplined creative branching.
+
+==================================================
+13. OUTPUT FORMAT I WANT FROM YOU
+==================================================
+
+As you execute:
+- create the app structure
+- implement the screens
+- keep code organized
+- use realistic mock data
+- make navigation work
+- use polished UI
+- avoid placeholder chaos
+
+When finished, provide:
+1. what you built
+2. file/folder structure
+3. how to run it
+4. what remains for backend integration
+5. recommended next build phase
+
+Start now and build the frontend MVP for byDebut exactly from this instruction.
