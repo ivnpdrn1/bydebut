@@ -1,0 +1,618 @@
+KIRO — SECOND MASTER INSTRUCTION BLOCK
+PROJECT: byDebut
+GOAL: Design and implement the backend-ready data model, mock service layer, and API contract foundation for the byDebut core interaction system.
+
+IMPORTANT:
+This instruction comes after the frontend MVP block.
+Do not rebuild the frontend from scratch.
+Work from the existing byDebut UI and evolve it into a backend-ready architecture.
+The purpose of this phase is to transform the current frontend prototype into a system that can later connect cleanly to a real backend, database, ranking engine, and review workflow.
+
+This phase must preserve the product identity:
+byDebut is a narrative variation system where users create a variation by changing one variable of a story, reviewers evaluate it through structured lenses, ranked variations emerge from multi-dimensional scoring, and strong ranked versions can be forked into new branches.
+
+==================================================
+1. PRIMARY OBJECTIVE
+==================================================
+
+Create the backend-ready foundation for:
+
+- typed domain models
+- normalized mock data
+- service/repository abstraction
+- clear API contracts
+- deterministic ranking logic
+- lineage-aware variation relationships
+- structured review and creator-response persistence model
+
+The output of this phase must make the codebase ready for:
+- real database integration
+- real REST or RPC endpoints
+- future auth/user roles
+- analytics
+- production ranking pipelines
+
+No need to fully build a server unless the workspace already supports it.
+If no backend exists yet, build the contract and local mock service layer in a way that can later be replaced by real APIs with minimal UI changes.
+
+==================================================
+2. ARCHITECTURAL GOAL
+==================================================
+
+Refactor the current frontend so it no longer depends on ad hoc page-local mock objects.
+
+Instead, the app should move toward a structure like:
+
+- domain models
+- seed data
+- repository or data access layer
+- service layer
+- ranking engine utilities
+- request/response contract definitions
+- route-aware data loading interface
+- mutation helpers for create / review / fork flows
+
+The UI should consume typed service functions rather than inline hardcoded data.
+
+==================================================
+3. DOMAIN MODEL REQUIREMENTS
+==================================================
+
+Define strong TypeScript domain types/interfaces for the following entities.
+
+----------------------------------------
+A. STORY
+----------------------------------------
+Fields should include at minimum:
+- id
+- slug
+- title
+- description
+- originalVariationId
+- tags
+- createdAt
+- updatedAt
+- status
+
+----------------------------------------
+B. VARIATION
+----------------------------------------
+This is the core entity.
+
+Required fields:
+- id
+- storyId
+- title
+- slug
+- branchName
+- sourceVariationId (nullable for original)
+- forkParentId (nullable)
+- creatorId
+- status
+- variableChange
+- variationSummary
+- whatChanged
+- immediateConsequences
+- longTermConsequences
+- deservesEvaluationReason
+- confidenceLevel
+- reviewState
+- rankingState
+- createdAt
+- updatedAt
+- submittedAt
+- rankedAt
+
+Include lineage metadata such as:
+- depth
+- path
+- forkCount
+- childVariationIds
+
+----------------------------------------
+C. VARIABLE CHANGE
+----------------------------------------
+Required fields:
+- id
+- variationId
+- label
+- changeType
+- clearDescription
+- whyItMatters
+- expectedEffects (string array)
+- preservedElements (optional for forks)
+- disruptedElements (optional for forks)
+
+----------------------------------------
+D. REVIEW
+----------------------------------------
+Required fields:
+- id
+- variationId
+- reviewerId
+- reviewerLens
+- recommendation
+- scores
+- strongestElement
+- weakestElement
+- instabilityPoint
+- preserveWhat
+- improvesOnSource
+- evidenceTags
+- submittedAt
+
+----------------------------------------
+E. REVIEW SCORES
+----------------------------------------
+Define structured score dimensions:
+- narrativeCoherence
+- internalLogic
+- emotionalPower
+- originality
+- longTermSustainability
+- adaptationPotential
+
+Also provide:
+- overallScore
+- weightedOverallScore (calculated)
+
+----------------------------------------
+F. CREATOR RESPONSE
+----------------------------------------
+This must not be collapsed into free text only.
+
+Required fields:
+- id
+- variationId
+- reviewId
+- creatorId
+- disposition (accept / reject / partially_accept)
+- responseText
+- submittedAt
+
+----------------------------------------
+G. RANKING ENTRY
+----------------------------------------
+Required fields:
+- id
+- variationId
+- storyId
+- rank
+- overallScore
+- weightedScore
+- coherenceScore
+- originalityScore
+- stabilityScore
+- emotionalImpactScore
+- adaptationPotentialScore
+- reviewCount
+- forkCount
+- consensusLevel
+- debatedLevel
+- rankingReasonSummary
+- createdAt
+- updatedAt
+
+----------------------------------------
+H. COMPARISON PAIR
+----------------------------------------
+Required fields:
+- id
+- leftVariationId
+- rightVariationId
+- storyId
+- comparisonType
+- keyDifferenceSummary
+- structuralGain
+- structuralLoss
+- emotionalShift
+- stabilityShift
+- reviewerVerdictSummary
+
+----------------------------------------
+I. USER
+----------------------------------------
+Even if auth is not implemented yet, create a minimal future-ready model:
+- id
+- displayName
+- handle
+- role
+- avatarUrl (optional)
+
+Role values should support:
+- creator
+- reviewer
+- curator
+- admin
+
+==================================================
+4. ENUMS / CONTROLLED VALUES
+==================================================
+
+Create strict enums or literal unions for:
+
+- variation status
+- review state
+- ranking state
+- confidence level
+- reviewer lens
+- recommendation
+- creator response disposition
+- change type
+- comparison type
+- consensus level
+
+Make the types safe and shared across the app.
+
+==================================================
+5. NORMALIZED DATA SHAPE
+==================================================
+
+Refactor the mock data into a normalized structure.
+
+For example:
+- storiesById
+- variationsById
+- reviewsById
+- creatorResponsesById
+- rankingEntriesById
+- usersById
+
+Also include ordered indexes:
+- variationIdsByStory
+- reviewIdsByVariation
+- childVariationIdsByParent
+- rankingIdsByStory
+- rankedVariationIds
+- rootVariationIds
+
+This is important because the product is lineage-heavy and ranking-heavy.
+
+==================================================
+6. SERVICE / REPOSITORY LAYER
+==================================================
+
+Create a data access layer that the UI consumes.
+
+Recommended structure:
+- repositories/
+  - storyRepository
+  - variationRepository
+  - reviewRepository
+  - rankingRepository
+  - comparisonRepository
+- services/
+  - createVariationService
+  - submitVariationForReviewService
+  - submitReviewService
+  - submitCreatorResponseService
+  - rankVariationsService
+  - forkVariationService
+  - compareVariationsService
+
+If a lighter structure is more appropriate for the repo, keep it clean, but preserve separation of concerns.
+
+The UI should stop importing raw mock data directly.
+Instead, pages/components should call service functions.
+
+==================================================
+7. REQUIRED SERVICE BEHAVIOR
+==================================================
+
+Implement at minimum the following service methods using mock/in-memory data:
+
+----------------------------------------
+STORY METHODS
+----------------------------------------
+- getStories()
+- getStoryById(storyId)
+- getStoryBySlug(slug)
+
+----------------------------------------
+VARIATION METHODS
+----------------------------------------
+- getVariationById(variationId)
+- getVariationsByStory(storyId)
+- getVariationLineage(variationId)
+- getChildrenOfVariation(variationId)
+- getRankedVariations(storyId)
+- createVariation(input)
+- updateVariationDraft(variationId, patch)
+- submitVariationForReview(variationId)
+
+----------------------------------------
+REVIEW METHODS
+----------------------------------------
+- getReviewsByVariation(variationId)
+- submitReview(input)
+- getReviewSummaryByVariation(variationId)
+
+----------------------------------------
+CREATOR RESPONSE METHODS
+----------------------------------------
+- getCreatorResponsesByVariation(variationId)
+- submitCreatorResponse(input)
+
+----------------------------------------
+RANKING METHODS
+----------------------------------------
+- getRankingBoard(storyId, filters, sort)
+- getRankingEntryByVariation(variationId)
+- recomputeRankingForStory(storyId)
+
+----------------------------------------
+FORK METHODS
+----------------------------------------
+- forkVariation(parentVariationId, input)
+- getForkChildren(parentVariationId)
+
+----------------------------------------
+COMPARISON METHODS
+----------------------------------------
+- buildComparison(leftVariationId, rightVariationId)
+- getComparisonByPair(leftVariationId, rightVariationId)
+
+==================================================
+8. API CONTRACT DESIGN
+==================================================
+
+Define the request/response contracts the future backend should expose.
+
+You may implement them as:
+- typed DTO files
+- endpoint contract files
+- service contract interfaces
+- or a mock REST contract layer
+
+If no backend exists, create a clean API contract folder like:
+- src/contracts/
+or
+- src/lib/api/contracts/
+
+Define payloads for at least:
+
+----------------------------------------
+GET /stories
+GET /stories/:storyId
+GET /stories/:storyId/variations
+GET /variations/:variationId
+POST /variations
+PATCH /variations/:variationId
+POST /variations/:variationId/submit
+GET /variations/:variationId/reviews
+POST /reviews
+POST /creator-responses
+GET /stories/:storyId/rankings
+POST /stories/:storyId/rankings/recompute
+POST /variations/:variationId/fork
+GET /compare?left=:id&right=:id
+----------------------------------------
+
+For each endpoint define:
+- params
+- query shape if needed
+- request body
+- response body
+- error shape
+
+==================================================
+9. ERROR AND VALIDATION MODEL
+==================================================
+
+Create shared validation and error shapes.
+
+At minimum define:
+- validation error
+- not found error
+- conflict error
+- invalid transition error
+
+Examples of invalid transitions:
+- submitting an incomplete variation for review
+- ranking a variation with zero reviews
+- forking a variation that does not exist
+- creator responding to a review belonging to another variation
+
+Add guard logic in services for these flows.
+
+==================================================
+10. RANKING ENGINE REQUIREMENTS
+==================================================
+
+Implement a deterministic ranking utility.
+
+This can be purely in TypeScript for now.
+
+Required:
+- aggregate review scores for a variation
+- compute overall score
+- compute weighted score
+- compute consensus level
+- compute debated level or divergence level
+- generate rankingReasonSummary
+
+Suggested weighting model:
+- narrative coherence
+- internal logic
+- emotional power
+- originality
+- long-term sustainability
+- adaptation potential
+
+You may choose reasonable weights, but document them.
+
+Also derive visible product metrics such as:
+- stabilityScore
+- emotionalImpactScore
+- reviewCount
+- forkCount
+
+The ranking engine must be reusable and isolated from UI components.
+
+==================================================
+11. LINEAGE MODEL REQUIREMENTS
+==================================================
+
+Because byDebut is branch-based, lineage must be first-class.
+
+Implement utilities to support:
+- root/original lookup
+- ancestor chain
+- descendant lookup
+- path string or path array
+- branch depth
+- relationship labels such as:
+  - original
+  - direct fork
+  - indirect descendant
+
+The UI should be able to ask:
+- where did this variation come from?
+- what ranked version was it forked from?
+- what children came from this variation?
+
+==================================================
+12. STATE TRANSITION RULES
+==================================================
+
+Implement explicit state transitions for major flows.
+
+Suggested states:
+Variation status:
+- draft
+- in_review
+- reviewed
+- ranked
+- forked
+- archived
+
+Review state:
+- not_submitted
+- pending
+- completed
+
+Ranking state:
+- unranked
+- eligible
+- ranked
+
+Rules:
+- draft can become in_review only if required fields are complete
+- in_review can become reviewed once minimum review threshold is met
+- reviewed can become ranked if ranking computation succeeds
+- ranked variations can be forked
+- original variations may also be forked if allowed by product rules
+
+Document these transitions in code or in a small markdown file.
+
+==================================================
+13. FORM INPUT TYPES
+==================================================
+
+Create explicit input types for mutations:
+
+- CreateVariationInput
+- UpdateVariationDraftInput
+- SubmitReviewInput
+- SubmitCreatorResponseInput
+- ForkVariationInput
+- RankingBoardFilterInput
+- RankingBoardSortInput
+
+This is important so the frontend forms map cleanly to future APIs.
+
+==================================================
+14. FILE/FOLDER STRUCTURE TARGET
+==================================================
+
+Aim for something like this, adapting to the actual repo:
+
+src/
+  types/
+    domain.ts
+    enums.ts
+    dto.ts
+  contracts/
+    stories.contract.ts
+    variations.contract.ts
+    reviews.contract.ts
+    rankings.contract.ts
+    compare.contract.ts
+    errors.contract.ts
+  data/
+    seed/
+    normalized/
+  repositories/
+  services/
+  utils/
+    ranking/
+    lineage/
+    validation/
+  state/
+  pages/
+  components/
+
+Do not force this structure if the repo already has a better pattern, but achieve equivalent separation.
+
+==================================================
+15. UI INTEGRATION EXPECTATION
+==================================================
+
+After refactoring:
+- existing pages should still work
+- pages should read from services, not raw local mock blobs
+- create/review/rank/fork/compare flows should remain intact
+- mock mutations should update the in-memory or local structured state consistently
+
+This phase is not just theoretical.
+It must improve the app architecture while preserving visible behavior.
+
+==================================================
+16. DOCUMENTATION REQUIREMENT
+==================================================
+
+Add a concise architecture note file explaining:
+- domain model
+- state transitions
+- ranking logic
+- API contract direction
+- how the frontend can later swap mock services for real backend calls
+
+Suggested file:
+knowledge/product/7-backend-ready-data-model-and-api-contract.md
+or similar location consistent with the repo
+
+==================================================
+17. OUTPUT I WANT FROM YOU
+==================================================
+
+When finished, provide:
+
+1. what domain models were added
+2. what services/repositories were created
+3. what API contracts were defined
+4. what ranking logic was implemented
+5. how lineage is represented
+6. what state transitions are enforced
+7. what files were created or refactored
+8. what remains for a real backend/database integration
+
+==================================================
+18. NON-NEGOTIABLE RULES
+==================================================
+
+Do not:
+- leave the app dependent on inline page mock constants
+- collapse everything into one giant file
+- use loose any typing
+- create fake contracts that do not align with the actual UI flows
+- ignore lineage and ranking relationships
+
+Do:
+- make the architecture clean
+- preserve product meaning
+- keep the UI working
+- keep everything typed and extensible
+
+Start now.
+Refactor the byDebut frontend MVP into a backend-ready architecture with strong domain models, normalized data, services, ranking utilities, lineage utilities, and API contracts.
