@@ -1,0 +1,20 @@
+
+Representa las reglas del mundo narrativo
+
+
+{
+  "worldModel": {
+    "setting": {
+      "timePeriod": "19th_century",
+      "locations": ["Paris", "France"],
+      "socialContext": ["poverty", "justice_system", "class_inequality"]
+    },
+    "worldRules": [
+      "The legal system is rigid and punitive.",
+      "Social mobility is limited.",
+      "Compassion can radically alter human destiny."
+    ],
+    "tone": ["tragic", "hopeful", "moral"],
+    "stakes": ["freedom", "identity", "redemption", "survival"]
+  }
+}
