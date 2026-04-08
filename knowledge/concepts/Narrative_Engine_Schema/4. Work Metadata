@@ -1,0 +1,11 @@
+{
+  "workId": "les_miserables_victor_hugo_1862",
+  "title": "Les Misérables",
+  "author": "Victor Hugo",
+  "year": 1862,
+  "sourceType": "public_domain",
+  "language": "fr",
+  "availableLocales": ["en", "es"],
+  "categories": ["classic", "social", "moral", "historical"],
+  "premise": "A man pursued by the law struggles to redeem his life through compassion and sacrifice."
+}
