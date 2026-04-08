@@ -1,0 +1,38 @@
+
+
+Estructura de base de datos recomendada
+
+
+Para backend, separaría así:
+
+works
+
+datos generales de la obra
+
+work_characters
+
+personajes por obra
+
+work_variables
+
+variables editables
+
+work_decision_nodes
+
+nodos causales
+
+variations
+
+versiones creadas por usuarios
+
+variation_votes
+
+ranking
+
+variation_forks
+
+bifurcaciones
+
+legal_sources
+
+trazabilidad del origen
