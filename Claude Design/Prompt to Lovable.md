@@ -65,7 +65,7 @@ Publishable API_KEY
 sb_publishable_WeH...
 ```
 
-##Si tu intención es construir este proyecto con Claude o Lovable, puedo prepararte un **prompt profesional mucho mejor que éste**, incluyendo:
+## Si tu intención es construir este proyecto con Claude o Lovable, puedo prepararte un **prompt profesional mucho mejor que éste**, incluyendo:
 
 * arquitectura completa,
 * autenticación,
@@ -78,5 +78,5 @@ sb_publishable_WeH...
 * responsive,
 * y código listo para producción.
 
-Quedaría con calidad de un **PRD profesional**, no simplemente una descripción del proyecto.##
+Quedaría con calidad de un **PRD profesional**, no simplemente una descripción del proyecto.
 
