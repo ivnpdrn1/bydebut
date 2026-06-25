@@ -1,424 +1,720 @@
-Sí. Este es el **paso a paso base** para armar byDebut en Supabase antes del frontend.
+ARQUITECTURA BACKEND BYDEBUT — SUPABASE + GEMINI XPRIZE
 
-Supabase será: **Auth + PostgreSQL + Storage + seguridad + funciones IA**. RLS debe estar activo para controlar qué datos puede ver o modificar cada usuario. ([Supabase][1])
+1. OBJETIVO GENERAL
 
----
+Crear en Supabase toda la estructura backend de byDebut para que Lovable pueda conectarse al frontend y mostrar al jurado:
 
-# Paso 1 — Crear proyecto
+MVP disponible:
+- Registro/login de usuarios.
+- Biblioteca de libros.
+- Capítulos.
+- Creación de versiones.
+- Guardado de versiones.
+- Ranking básico.
+- Historial del usuario.
+- Generación IA usando Gemini.
+- Embeddings con Gemini.
+- Búsqueda semántica con Supabase pgvector.
 
-En Supabase:
+BETA visible:
+- Árbol de versiones.
+- Versiones de versiones.
+- Review general y especializado.
+- Línea infantil.
+- Modo productor/director.
+- Monetización por suscripción.
+- Marketplace editorial.
+- Automatizaciones futuras con n8n/OpenClaw.
 
-1. New Project.
-2. Nombre: `bydebut`.
-3. Region: cercana a tus usuarios iniciales.
-4. Guarda:
+2. TECNOLOGÍAS PRINCIPALES
 
-   * Project URL
-   * Anon/Public Key
-   * Service Role Key, solo backend
-5. Ve a **SQL Editor**.
+Frontend:
+- Lovable.
 
----
+Backend:
+- Supabase.
 
-# Paso 2 — Crear extensiones
+Base de datos:
+- PostgreSQL dentro de Supabase.
 
-Ejecuta:
+Vector database:
+- pgvector dentro de Supabase.
 
-```sql
-create extension if not exists "pgcrypto";
-create extension if not exists "uuid-ossp";
-```
+IA:
+- Gemini API.
+- Para embeddings: gemini-embedding-001.
+- Para generación: Gemini 1.5 / Gemini 2.x según disponibilidad del hackathon.
 
----
+NO usar OpenAI en la versión del Hackathon, para mantener alineación con Gemini XPRIZE.
 
-# Paso 3 — Crear tablas principales
+3. EXTENSIONES EN SUPABASE
 
-Ejecuta todo esto en SQL Editor:
+Ejecutar en SQL Editor:
 
-```sql
+create extension if not exists vector with schema extensions;
+create extension if not exists pgcrypto;
+
+4. TABLAS PRINCIPALES MVP
+
+4.1 profiles
+
 create table public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   full_name text,
-  email text,
   role text default 'reader',
   avatar_url text,
+  country text,
+  language text default 'es',
   created_at timestamptz default now()
 );
+
+Roles posibles:
+- reader
+- creator
+- author
+- editor
+- publisher
+- producer
+- admin
+
+4.2 books
 
 create table public.books (
   id uuid primary key default gen_random_uuid(),
   title text not null,
   subtitle text,
   author_name text,
-  language text default 'en',
+  language text default 'es',
   description text,
+  genre text,
   cover_url text,
-  public_domain boolean default false,
-  owner_id uuid references public.profiles(id),
+  visibility text default 'public',
   status text default 'active',
+  created_by uuid references public.profiles(id),
   created_at timestamptz default now()
 );
+
+4.3 chapters
 
 create table public.chapters (
   id uuid primary key default gen_random_uuid(),
   book_id uuid references public.books(id) on delete cascade,
   chapter_number int,
   title text,
-  content text,
+  content text not null,
   created_at timestamptz default now()
 );
 
-create table public.transformation_modes (
+4.4 chapter_embeddings
+
+IMPORTANTE:
+Si usamos gemini-embedding-001 en dimensión completa, usar vector(3072).
+Si decidimos reducir costo/espacio, usar vector(1536) o vector(768), pero debe ser consistente en toda la base.
+
+create table public.chapter_embeddings (
   id uuid primary key default gen_random_uuid(),
-  name text not null,
-  description text,
-  is_mvp boolean default true,
-  is_beta boolean default false,
+  chapter_id uuid references public.chapters(id) on delete cascade,
+  book_id uuid references public.books(id) on delete cascade,
+  content text not null,
+  embedding vector(3072),
   created_at timestamptz default now()
 );
+
+5. TABLAS DE VERSIONES
+
+5.1 versions
 
 create table public.versions (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references public.profiles(id) on delete cascade,
   book_id uuid references public.books(id) on delete cascade,
-  chapter_id uuid references public.chapters(id),
-  parent_version_id uuid references public.versions(id),
-  mode_id uuid references public.transformation_modes(id),
+  chapter_id uuid references public.chapters(id) on delete set null,
+  parent_version_id uuid references public.versions(id) on delete set null,
   title text,
   prompt_used text,
-  generated_content text,
+  mode text,
+  variables jsonb,
+  generated_content text not null,
   visibility text default 'private',
-  status text default 'draft',
-  is_beta_feature boolean default false,
-  created_at timestamptz default now()
-);
-
-create table public.version_variables (
-  id uuid primary key default gen_random_uuid(),
-  version_id uuid references public.versions(id) on delete cascade,
-  variable_name text,
-  variable_value text,
-  created_at timestamptz default now()
-);
-
-create table public.ratings (
-  id uuid primary key default gen_random_uuid(),
-  version_id uuid references public.versions(id) on delete cascade,
-  user_id uuid references public.profiles(id) on delete cascade,
-  rating int check (rating between 1 and 5),
-  comment text,
-  created_at timestamptz default now(),
-  unique(version_id, user_id)
-);
-
-create table public.subscriptions (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid references public.profiles(id) on delete cascade,
-  plan_name text default 'free',
-  monthly_version_limit int default 5,
-  versions_used int default 0,
   status text default 'active',
+  is_beta boolean default false,
   created_at timestamptz default now()
 );
+
+Modos:
+- literary
+- systemic_analysis
+- cinematic_variation
+- full_novel
+- child_version
+- producer_pitch
+- editor_review
+
+5.2 version_embeddings
+
+create table public.version_embeddings (
+  id uuid primary key default gen_random_uuid(),
+  version_id uuid references public.versions(id) on delete cascade,
+  book_id uuid references public.books(id) on delete cascade,
+  content text not null,
+  embedding vector(3072),
+  created_at timestamptz default now()
+);
+
+6. TABLAS DE VARIABLES CREATIVAS
+
+6.1 creative_variables
+
+create table public.creative_variables (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  description text,
+  category text,
+  is_active boolean default true
+);
+
+Variables iniciales:
+- immortality
+- power
+- artificial_intelligence
+- religion
+- love
+- justice
+- war
+- memory
+- betrayal
+- family
+- forgiveness
+- ambition
+- fear
+- freedom
+
+6.2 version_variable_values
+
+create table public.version_variable_values (
+  id uuid primary key default gen_random_uuid(),
+  version_id uuid references public.versions(id) on delete cascade,
+  variable_id uuid references public.creative_variables(id) on delete cascade,
+  intensity int check (intensity >= 0 and intensity <= 100),
+  notes text
+);
+
+7. TABLAS DE RANKING Y ENGAGEMENT
+
+7.1 version_votes
+
+create table public.version_votes (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references public.profiles(id) on delete cascade,
+  version_id uuid references public.versions(id) on delete cascade,
+  vote_type text check (vote_type in ('like', 'dislike')),
+  created_at timestamptz default now(),
+  unique(user_id, version_id)
+);
+
+7.2 version_comments
+
+create table public.version_comments (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references public.profiles(id) on delete cascade,
+  version_id uuid references public.versions(id) on delete cascade,
+  comment text not null,
+  created_at timestamptz default now()
+);
+
+7.3 version_metrics
+
+create table public.version_metrics (
+  version_id uuid primary key references public.versions(id) on delete cascade,
+  views_count int default 0,
+  likes_count int default 0,
+  forks_count int default 0,
+  score numeric default 0,
+  updated_at timestamptz default now()
+);
+
+8. TABLAS BETA
+
+8.1 beta_features
 
 create table public.beta_features (
   id uuid primary key default gen_random_uuid(),
+  feature_key text unique not null,
   feature_name text not null,
   description text,
-  target_user text,
-  revenue_potential text,
   status text default 'beta',
+  visible_to_jury boolean default true,
   created_at timestamptz default now()
 );
-```
 
----
+Features BETA:
+- version_tree
+- fork_of_fork
+- specialized_reviewer
+- child_line
+- producer_mode
+- publisher_dashboard
+- marketplace
+- subscription_engine
+- ai_video_adaptation
+- n8n_marketing_automation
+- openclaw_commercial_agents
 
-# Paso 4 — Activar seguridad RLS
+8.2 beta_waitlist
 
-```sql
+create table public.beta_waitlist (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references public.profiles(id) on delete cascade,
+  feature_key text,
+  interest_level int default 5,
+  notes text,
+  created_at timestamptz default now()
+);
+
+9. TABLAS DE SUSCRIPCIÓN Y MONETIZACIÓN
+
+9.1 plans
+
+create table public.plans (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  price_monthly numeric,
+  max_versions_per_month int,
+  max_books int,
+  features jsonb,
+  is_active boolean default true
+);
+
+Planes sugeridos:
+- Free Reader
+- Creator Basic
+- Creator Pro
+- Author Studio
+- Publisher / Producer Access
+
+9.2 user_subscriptions
+
+create table public.user_subscriptions (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references public.profiles(id) on delete cascade,
+  plan_id uuid references public.plans(id),
+  status text default 'trial',
+  started_at timestamptz default now(),
+  ends_at timestamptz
+);
+
+9.3 usage_limits
+
+create table public.usage_limits (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references public.profiles(id) on delete cascade,
+  month text,
+  versions_created int default 0,
+  gemini_requests int default 0,
+  embeddings_created int default 0,
+  updated_at timestamptz default now()
+);
+
+10. TABLAS PARA PROMPTS
+
+10.1 prompt_templates
+
+create table public.prompt_templates (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  mode text,
+  system_prompt text not null,
+  user_prompt_template text not null,
+  is_active boolean default true,
+  created_at timestamptz default now()
+);
+
+Prompts iniciales:
+- Generate Literary Variation
+- Generate Systemic Analysis
+- Generate Cinematic Version
+- Generate Full Novel Expansion
+- General Reviewer
+- Specialized Reviewer
+- Child Adaptation
+- Producer Pitch
+
+11. TABLAS DE AUDITORÍA
+
+11.1 ai_requests
+
+create table public.ai_requests (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references public.profiles(id),
+  provider text default 'gemini',
+  model text,
+  request_type text,
+  input_summary text,
+  output_summary text,
+  tokens_input int,
+  tokens_output int,
+  status text,
+  error_message text,
+  created_at timestamptz default now()
+);
+
+11.2 audit_logs
+
+create table public.audit_logs (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references public.profiles(id),
+  action text not null,
+  table_name text,
+  record_id uuid,
+  metadata jsonb,
+  created_at timestamptz default now()
+);
+
+12. STORAGE EN SUPABASE
+
+Crear buckets:
+
+- book-covers
+- author-assets
+- user-uploads
+- generated-assets
+- beta-demo-assets
+
+Reglas:
+- book-covers: lectura pública, escritura autenticada.
+- user-uploads: privado por usuario.
+- generated-assets: lectura según visibilidad de versión.
+- beta-demo-assets: visible para demo/jurado.
+
+13. FUNCIONES RPC PARA BÚSQUEDA SEMÁNTICA
+
+13.1 Buscar capítulos similares
+
+create or replace function public.match_chapters (
+  query_embedding vector(3072),
+  match_threshold float,
+  match_count int
+)
+returns table (
+  chapter_id uuid,
+  book_id uuid,
+  content text,
+  similarity float
+)
+language sql stable
+as $$
+  select
+    chapter_embeddings.chapter_id,
+    chapter_embeddings.book_id,
+    chapter_embeddings.content,
+    1 - (chapter_embeddings.embedding <=> query_embedding) as similarity
+  from public.chapter_embeddings
+  where 1 - (chapter_embeddings.embedding <=> query_embedding) > match_threshold
+  order by chapter_embeddings.embedding <=> query_embedding
+  limit match_count;
+$$;
+
+13.2 Buscar versiones similares
+
+create or replace function public.match_versions (
+  query_embedding vector(3072),
+  match_threshold float,
+  match_count int
+)
+returns table (
+  version_id uuid,
+  book_id uuid,
+  content text,
+  similarity float
+)
+language sql stable
+as $$
+  select
+    version_embeddings.version_id,
+    version_embeddings.book_id,
+    version_embeddings.content,
+    1 - (version_embeddings.embedding <=> query_embedding) as similarity
+  from public.version_embeddings
+  where 1 - (version_embeddings.embedding <=> query_embedding) > match_threshold
+  order by version_embeddings.embedding <=> query_embedding
+  limit match_count;
+$$;
+
+14. ÍNDICES RECOMENDADOS
+
+create index chapters_book_id_idx on public.chapters(book_id);
+create index versions_user_id_idx on public.versions(user_id);
+create index versions_book_id_idx on public.versions(book_id);
+create index versions_parent_version_id_idx on public.versions(parent_version_id);
+create index version_votes_version_id_idx on public.version_votes(version_id);
+create index ai_requests_user_id_idx on public.ai_requests(user_id);
+
+Índices vectoriales:
+
+create index chapter_embeddings_embedding_idx
+on public.chapter_embeddings
+using ivfflat (embedding vector_cosine_ops)
+with (lists = 100);
+
+create index version_embeddings_embedding_idx
+on public.version_embeddings
+using ivfflat (embedding vector_cosine_ops)
+with (lists = 100);
+
+15. ROW LEVEL SECURITY
+
+Activar RLS:
+
 alter table public.profiles enable row level security;
 alter table public.books enable row level security;
 alter table public.chapters enable row level security;
-alter table public.transformation_modes enable row level security;
 alter table public.versions enable row level security;
-alter table public.version_variables enable row level security;
-alter table public.ratings enable row level security;
-alter table public.subscriptions enable row level security;
-alter table public.beta_features enable row level security;
-```
+alter table public.version_votes enable row level security;
+alter table public.version_comments enable row level security;
+alter table public.user_subscriptions enable row level security;
+alter table public.usage_limits enable row level security;
 
----
+Política profiles:
 
-# Paso 5 — Crear políticas de acceso
-
-```sql
 create policy "Users can view own profile"
-on public.profiles
-for select
+on public.profiles for select
 using (auth.uid() = id);
 
 create policy "Users can update own profile"
-on public.profiles
-for update
+on public.profiles for update
 using (auth.uid() = id);
 
-create policy "Anyone can read active books"
-on public.books
-for select
-using (status = 'active');
+Política books públicos:
 
-create policy "Anyone can read chapters"
-on public.chapters
-for select
-using (true);
+create policy "Anyone can view public books"
+on public.books for select
+using (visibility = 'public');
 
-create policy "Anyone can read transformation modes"
-on public.transformation_modes
-for select
-using (true);
+create policy "Creators can insert books"
+on public.books for insert
+with check (auth.uid() = created_by);
 
-create policy "Users can read own versions"
-on public.versions
-for select
-using (auth.uid() = user_id or visibility = 'public');
+Política versions:
+
+create policy "Users can view own private versions"
+on public.versions for select
+using (
+  visibility = 'public'
+  or auth.uid() = user_id
+);
 
 create policy "Users can create own versions"
-on public.versions
-for insert
+on public.versions for insert
 with check (auth.uid() = user_id);
 
 create policy "Users can update own versions"
-on public.versions
-for update
+on public.versions for update
 using (auth.uid() = user_id);
 
-create policy "Users can delete own versions"
-on public.versions
-for delete
-using (auth.uid() = user_id);
+16. EDGE FUNCTIONS RECOMENDADAS
 
-create policy "Users can read variables of own versions"
-on public.version_variables
-for select
-using (
-  exists (
-    select 1 from public.versions
-    where versions.id = version_variables.version_id
-    and versions.user_id = auth.uid()
-  )
-);
+Crear Edge Functions:
 
-create policy "Users can insert variables for own versions"
-on public.version_variables
-for insert
-with check (
-  exists (
-    select 1 from public.versions
-    where versions.id = version_variables.version_id
-    and versions.user_id = auth.uid()
-  )
-);
+1. generate-version
+Función:
+- Recibe book_id, chapter_id, mode, variables, user_prompt.
+- Recupera contenido base.
+- Genera embedding del input con Gemini.
+- Busca contexto similar en Supabase RPC.
+- Construye prompt final.
+- Llama Gemini.
+- Guarda versión.
+- Genera embedding de la nueva versión.
+- Guarda version_embedding.
+- Registra ai_request.
 
-create policy "Anyone can read ratings"
-on public.ratings
-for select
-using (true);
+2. generate-embedding
+Función:
+- Recibe texto.
+- Llama Gemini embedding.
+- Devuelve vector.
 
-create policy "Users can insert own ratings"
-on public.ratings
-for insert
-with check (auth.uid() = user_id);
+3. review-version
+Función:
+- Recibe version_id.
+- Usa Gemini para evaluar:
+  - calidad narrativa
+  - coherencia
+  - originalidad
+  - potencial editorial
+  - potencial cinematográfico
+  - riesgos de copyright
+  - sugerencias
 
-create policy "Users can read own subscription"
-on public.subscriptions
-for select
-using (auth.uid() = user_id);
+4. create-version-fork
+Función:
+- Crea una nueva versión basada en otra versión.
+- Mantiene parent_version_id.
+- Permite árbol de versiones.
 
-create policy "Anyone can read beta features"
-on public.beta_features
-for select
-using (true);
-```
+5. beta-feature-interest
+Función:
+- Guarda interés del usuario en una función BETA.
 
----
+17. ESTRUCTURA DEL FLUJO IA
 
-# Paso 6 — Insertar datos MVP y BETA
+Flujo para generar una versión:
 
-```sql
-insert into public.transformation_modes (name, description, is_mvp, is_beta)
-values
-('Literary Variation', 'Create a new literary version from the selected text.', true, false),
-('Cinematic Variation', 'Transform the text into a film or series-oriented version.', true, false),
-('Systemic Analysis', 'Analyze the story through systems, incentives, conflicts, and consequences.', true, false),
-('Full Novel Expansion', 'Expand a short idea or chapter into a longer novel structure.', true, true),
-('Children Illustrated Version', 'Create a child-friendly illustrated adaptation.', false, true),
-('Publisher Licensing Package', 'Prepare the version for commercial review and rights evaluation.', false, true),
-('Audio / Video Adaptation', 'Prepare the story for audio, video, or streaming formats.', false, true);
+Frontend Lovable:
+- Usuario selecciona libro.
+- Usuario selecciona capítulo.
+- Usuario escoge modo.
+- Usuario ajusta variables.
+- Usuario hace clic en Generate.
 
-insert into public.beta_features (feature_name, description, target_user, revenue_potential)
-values
-('Publisher Marketplace', 'Publishers can discover high-performing versions.', 'Publisher', 'Licensing, subscription, commission'),
-('Author Revenue Dashboard', 'Authors can track versions, engagement, and monetization.', 'Author', 'Author Pro subscription'),
-('Producer Studio Access', 'Film and streaming producers can evaluate stories for adaptation.', 'Producer', 'Premium B2B access'),
-('Children Illustrated Adaptation', 'Create age-specific illustrated versions.', 'Reader / Parent / Publisher', 'Premium generation package'),
-('Version Licensing', 'Allow commercial licensing of selected versions.', 'Author / Publisher / Producer', 'Transaction fees'),
-('Multi-language Publishing', 'Generate multilingual versions for global publishing.', 'Publisher', 'Enterprise subscription');
-```
+Supabase Edge Function:
+- Valida usuario.
+- Revisa límite mensual.
+- Recupera capítulo.
+- Genera embedding del prompt con Gemini.
+- Busca capítulos/versiones similares.
+- Construye contexto.
+- Llama Gemini.
+- Guarda resultado.
+- Guarda embedding.
+- Actualiza usage_limits.
+- Devuelve versión al frontend.
 
----
+18. CÓDIGO BASE PYTHON PARA GEMINI + SUPABASE
 
-# Paso 7 — Crear libros demo
+Este ejemplo sustituye OpenAI por Gemini:
 
-```sql
-insert into public.books (title, subtitle, author_name, language, description, public_domain, status)
-values
-('The Only Option', 'AI, Mars, and the future of civilization', 'Iván Padrón', 'en', 'A speculative story about humanity, artificial intelligence, and survival.', false, 'active'),
-('Lethal Eternity', 'The first limit of immortality', 'Iván Padrón', 'en', 'A literary exploration of immortality and the collapse of human behavior without mortality.', false, 'active'),
-('The Devil’s Throats', 'The invisible system that sustains and threatens the global economy', 'Iván Padrón', 'en', 'A geopolitical story about chokepoints, trade, war, and fragile global systems.', false, 'active');
-```
+from google import genai
+from supabase import create_client, Client
 
-Después agrega manualmente 2 o 3 capítulos demo por libro desde **Table Editor > chapters**.
+GEMINI_API_KEY = "API_KEY_GEMINI"
+SUPABASE_URL = "URL_SUPABASE"
+SUPABASE_KEY = "SERVICE_ROLE_KEY_SUPABASE"
 
----
+client = genai.Client(api_key=GEMINI_API_KEY)
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Paso 8 — Crear Storage
+persona = {
+    "nombre": "Ana",
+    "apellido": "Gómez",
+    "mensaje": "Hola, este es un mensaje de prueba para generar embeddings."
+}
 
-En Supabase > Storage crea buckets:
+insert_result = supabase.table("mensajes").insert(persona).execute()
+mensaje_id = insert_result.data[0]["id"]
 
-```text
-book-covers
-book-files
-user-uploads
-generated-assets
-```
+embedding_result = client.models.embed_content(
+    model="gemini-embedding-001",
+    contents=persona["mensaje"]
+)
 
-Recomendación:
+embedding = embedding_result.embeddings[0].values
 
-```text
-book-covers = public
-book-files = private
-user-uploads = private
-generated-assets = private
-```
+supabase.table("mensaje_embeddings").insert({
+    "mensaje_id": mensaje_id,
+    "embedding": embedding
+}).execute()
 
-Supabase Storage usa políticas de acceso conectadas con RLS; por defecto no permite uploads sin políticas configuradas. ([Supabase][2])
+print("Embedding generado con Gemini y guardado en Supabase.")
 
----
+19. ESTRUCTURA RECOMENDADA PARA LOVABLE
 
-# Paso 9 — Separar MVP vs BETA en la base de datos
+Lovable debe saber que el backend ya tendrá:
 
-La clave está en estos campos:
+- auth.users
+- profiles
+- books
+- chapters
+- versions
+- creative_variables
+- version_votes
+- version_comments
+- version_metrics
+- beta_features
+- plans
+- user_subscriptions
+- usage_limits
 
-```text
-is_mvp
-is_beta
-status
-visibility
-```
+Y debe llamar:
+- generate-version
+- review-version
+- create-version-fork
+- match_chapters
+- match_versions
 
-En el frontend:
+20. DATOS SEED PARA DEMO DEL JURADO
 
-```text
-MVP = is_mvp = true
-BETA = is_beta = true
-```
+Insertar:
 
-Así el jurado verá:
+- 2 libros demo.
+- 5 capítulos demo.
+- 10 variables creativas.
+- 3 planes.
+- 8 beta_features.
+- 3 prompt_templates.
+- 1 versión pública demo.
+- 1 árbol de versiones simple.
 
-```text
-Disponible ahora:
-- Library
-- Version Generator
-- Saved Versions
-- Version Tree
-- Ranking
+21. QUÉ MOSTRAR COMO MVP
 
-BETA:
-- Publisher Marketplace
-- Studio Access
-- Licensing
-- Audio/Video
-- Revenue Dashboard
-```
+MVP real:
+- Login.
+- Biblioteca.
+- Selección de capítulo.
+- Variables creativas.
+- Generar versión con Gemini.
+- Guardar versión.
+- Ver mis versiones.
+- Publicar versión.
+- Ranking simple.
+- Búsqueda semántica.
 
----
+22. QUÉ MOSTRAR COMO BETA
 
-# Paso 10 — Preparar Edge Function para IA
+BETA visible:
+- Version Tree.
+- Producer Mode.
+- Publisher Marketplace.
+- Child Line.
+- Specialized Reviewer.
+- Subscription Dashboard.
+- Video Adaptation.
+- n8n Marketing Automation.
+- OpenClaw Commercial Agents.
 
-Más adelante crearás una función:
+Estas funciones pueden estar visibles con etiquetas:
+- BETA
+- Coming soon
+- Request access
+- Join waitlist
 
-```text
-generate-version
-```
+23. DECISIÓN CLAVE PARA EL HACKATHON
 
-Su trabajo será:
+Para el Gemini XPRIZE Hackathon:
 
-```text
-recibir usuario + libro + capítulo + modo + variables
-leer contenido
-llamar Gemini API
-guardar resultado en versions
-devolver resultado al frontend
-```
+NO:
+- No presentar OpenAI como motor central.
+- No usar embeddings de OpenAI.
+- No depender de ChatGPT para la generación visible.
 
-Esto es importante porque **la API key de Gemini no debe ir en el frontend**. Supabase permite crear funciones de base de datos desde SQL Editor y también Edge Functions para lógica server-side. ([Supabase][3])
+SÍ:
+- Gemini genera embeddings.
+- Gemini genera versiones.
+- Gemini revisa versiones.
+- Gemini explica diferencias.
+- Gemini ayuda a convertir libros en universos narrativos.
+- Supabase organiza, guarda, protege y permite búsqueda vectorial.
 
----
+24. RESUMEN FINAL DE ARQUITECTURA
 
-# Paso 11 — Arquitectura final inicial
-
-```text
-Frontend Claude / Lovable
-        |
-        v
-Supabase Auth
-        |
-        v
-Supabase PostgreSQL
-        |
-        v
-Supabase Storage
-        |
-        v
-Supabase Edge Function
-        |
-        v
-Gemini API
-```
-
-Después:
-
-```text
-Supabase
-   |
-   v
-n8n = automatización operativa
-
-OpenClaw = inteligencia comercial futura
-```
-
----
-
-# Paso 12 — Qué hacer inmediatamente
-
-Tu primer trabajo en Supabase es este orden:
-
-```text
-1. Crear proyecto
-2. Ejecutar SQL de tablas
-3. Activar RLS
-4. Crear policies
-5. Insertar transformation_modes
-6. Insertar beta_features
-7. Insertar libros demo
-8. Crear buckets de Storage
-9. Probar login
-10. Luego pedirle a Claude el frontend conectado a Supabase
-```
-
-Mi recomendación final: **no construyas primero un frontend bonito**. Construye primero esta base. Después Claude o Lovable tendrán una estructura real sobre la cual trabajar.
-
-[1]: https://supabase.com/docs/guides/database/postgres/row-level-security?utm_source=chatgpt.com "Row Level Security | Supabase Docs"
-[2]: https://supabase.com/docs/guides/storage/security/access-control?utm_source=chatgpt.com "Storage Access Control | Supabase Docs"
-[3]: https://supabase.com/docs/guides/database/functions?utm_source=chatgpt.com "Database Functions | Supabase Docs"
+byDebut =
+Lovable frontend
++ Supabase backend
++ PostgreSQL database
++ pgvector semantic memory
++ Supabase Auth
++ Supabase Storage
++ Supabase Edge Functions
++ Gemini embeddings
++ Gemini generative AI
++ n8n/OpenClaw como capa futura comercial
