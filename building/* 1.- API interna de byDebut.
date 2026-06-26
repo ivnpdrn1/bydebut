@@ -1,0 +1,247 @@
+Ahora viene una decisión importante de arquitectura.
+
+**No te recomiendo continuar escribiendo Edge Functions una por una todavía.**
+
+Hay algo que falta antes y que, en mi opinión, hará que byDebut sea mucho más sólido y te evitará tener que reescribir funciones más adelante.
+
+## Lo que ya tienes
+
+Hasta ahora ya construiste (o estás construyendo):
+
+✅ Base de datos PostgreSQL.
+
+✅ Relaciones entre tablas.
+
+✅ Tabla central de embeddings.
+
+✅ Función SQL de búsqueda vectorial.
+
+✅ RLS y Policies.
+
+✅ Arquitectura MVP + BETA.
+
+Eso representa aproximadamente el **35-40%** del backend.
+
+---
+
+# Lo que falta antes de las Edge Functions
+
+Yo construiría primero la **API interna de byDebut**.
+
+¿Por qué?
+
+Porque todas las Edge Functions deberían seguir el mismo patrón.
+
+Por ejemplo:
+
+```text
+Frontend
+      │
+      ▼
+Edge Function
+      │
+      ▼
+Validation
+      │
+      ▼
+Authorization
+      │
+      ▼
+Semantic Context Builder
+      │
+      ▼
+Gemini
+      │
+      ▼
+PostgreSQL
+      │
+      ▼
+Logging
+```
+
+Si escribes las funciones antes de definir ese patrón, terminarás duplicando mucho código.
+
+---
+
+# El siguiente paso que recomiendo
+
+Antes de crear más funciones, definiría exactamente estas cinco:
+
+## 1. Semantic Context Builder ⭐⭐⭐⭐⭐
+
+La más importante.
+
+Su única responsabilidad:
+
+```text
+Recibe entity_type
+Recibe entity_id
+
+↓
+
+Construye semantic_text
+```
+
+Nunca llama a Gemini.
+
+Nunca guarda embeddings.
+
+Solo construye contexto.
+
+---
+
+## 2. Gemini Client ⭐⭐⭐⭐⭐
+
+Una sola función para hablar con Gemini.
+
+```text
+generateText()
+
+review()
+
+embedding()
+
+```
+
+Toda la aplicación usará esa misma función.
+
+---
+
+## 3. Database Repository
+
+Una sola capa para leer Supabase.
+
+Por ejemplo
+
+```text
+getBook()
+
+getChapter()
+
+getScene()
+
+getCharacter()
+
+saveEmbedding()
+
+saveVersion()
+
+```
+
+---
+
+## 4. Embedding Service
+
+Hace solamente
+
+```text
+Semantic Builder
+
+↓
+
+Gemini Embedding
+
+↓
+
+Guardar
+```
+
+---
+
+## 5. Search Service
+
+Hace
+
+```text
+Pregunta
+
+↓
+
+Embedding
+
+↓
+
+match_embeddings()
+
+↓
+
+Recuperar registros
+
+↓
+
+Responder
+```
+
+---
+
+# Después sí vienen las Edge Functions
+
+Entonces escribiríamos solamente funciones muy pequeñas.
+
+Por ejemplo
+
+```text
+create-embedding
+```
+
+haría
+
+```text
+EmbeddingService.create()
+```
+
+Nada más.
+
+---
+
+## generate-version
+
+Haría
+
+```text
+VersionService.generate()
+```
+
+Nada más.
+
+---
+
+## review-version
+
+Haría
+
+```text
+ReviewService.review()
+```
+
+Nada más.
+
+---
+
+# Esta arquitectura tiene una ventaja enorme
+
+Cuando dentro de seis meses quieras cambiar Gemini por otro modelo, solo modificarás un archivo.
+
+No tocarás las 20 funciones.
+
+Eso es arquitectura profesional.
+
+---
+
+# Mi recomendación para el Hackathon
+
+Si el objetivo es que **byDebut** impresione al jurado del **Gemini XPRIZE**, creo que vale la pena invertir un poco más de tiempo ahora y construir una arquitectura que se vea como la de un producto comercial listo para escalar.
+
+En lugar de seguir creando Edge Functions aisladas, propondría escribir un documento maestro del backend que incluya:
+
+* la estructura completa de Supabase;
+* todas las tablas y relaciones;
+* el flujo de datos;
+* el **Semantic Context Builder**;
+* la arquitectura de servicios;
+* las Edge Functions ya desacopladas;
+* la integración con Gemini;
+* la seguridad (RLS, Policies y Secrets);
+* y la forma en que Claude consumirá todo desde el frontend.
+
+Ese documento serviría como el plano definitivo de byDebut. A partir de él, podrías construir el backend de forma ordenada, reducir errores y tener una arquitectura que no solo funcione para el MVP del hackathon, sino que también esté preparada para evolucionar hacia la versión comercial sin tener que rehacer componentes fundamentales. Creo que ese sería el siguiente paso con mayor retorno antes de seguir escribiendo más código.
