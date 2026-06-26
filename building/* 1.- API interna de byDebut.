@@ -245,3 +245,53 @@ En lugar de seguir creando Edge Functions aisladas, propondría escribir un docu
 * y la forma en que Claude consumirá todo desde el frontend.
 
 Ese documento serviría como el plano definitivo de byDebut. A partir de él, podrías construir el backend de forma ordenada, reducir errores y tener una arquitectura que no solo funcione para el MVP del hackathon, sino que también esté preparada para evolucionar hacia la versión comercial sin tener que rehacer componentes fundamentales. Creo que ese sería el siguiente paso con mayor retorno antes de seguir escribiendo más código.
+
+
+*************************************************************************************************
+*************************************************************************************************
+*************************************************************************************************
+
+Perfecto. Entonces el próximo entregable será:
+
+**Documento Maestro Backend byDebut — Supabase + Gemini + Claude FrontEnd**
+
+Lo voy a construir en esta secuencia:
+
+1. Arquitectura general.
+2. Flujo completo MVP + BETA.
+3. Estructura SQL ya creada.
+4. Edge Functions necesarias.
+5. Servicios internos reutilizables.
+6. Semantic Context Builder.
+7. Gemini Client.
+8. Embedding Service.
+9. Semantic Search Service.
+10. Generate Version Service.
+11. Review Service.
+12. Cómo Claude debe consumir todo desde el FrontEnd.
+
+El punto clave será este:
+
+```text
+Claude FrontEnd
+   ↓
+Supabase Edge Function
+   ↓
+Service Layer
+   ↓
+Semantic Context Builder
+   ↓
+Gemini
+   ↓
+Supabase PostgreSQL
+```
+
+Primero te daré el **documento maestro completo**, y después pasamos a los códigos `index.ts` uno por uno, empezando por la versión corregida de:
+
+```text
+create-embedding
+```
+
+con estructura profesional y reutilizable.
+
+
