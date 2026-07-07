@@ -1,0 +1,474 @@
+
+I think this is the right moment to become extremely disciplined.
+
+We have spent weeks designing something that is much larger than a hackathon project. That is a strength—but it can also become a weakness if we try to build all of it in the next 47 days.
+
+If I were the CTO of byDebut today, I would split the project into two completely different roadmaps.
+
+---
+
+# Roadmap A
+
+# Gemini XPRIZE MVP
+
+**Deadline:** Submission Day
+
+Mission:
+
+> Win the Hackathon.
+
+Nothing else.
+
+---
+
+# Roadmap B
+
+## byDebut v10
+
+Mission:
+
+Build the company.
+
+No deadline.
+
+No compromises.
+
+---
+
+These two roadmaps must never be confused again.
+
+---
+
+# byDebut XPRIZE MVP
+
+## The Judges Must Experience Exactly One Story
+
+Not ten books.
+
+Not a publisher portal.
+
+One Story Universe.
+
+---
+
+# The Demonstration
+
+## Scene 1
+
+Physical book.
+
+Last page.
+
+QR Code.
+
+"Continue this story."
+
+---
+
+## Scene 2
+
+Phone scans QR.
+
+Story Portal opens.
+
+Beautiful animation.
+
+Official Story Passport.
+
+Verified.
+
+---
+
+## Scene 3
+
+Gemini already understands:
+
+* characters
+* relationships
+* timeline
+* emotional arcs
+* writing style
+
+Without asking the user anything.
+
+---
+
+## Scene 4
+
+Reader chooses
+
+"What if..."
+
+Example
+
+"What if Elena never died?"
+
+Gemini proposes three directions.
+
+---
+
+## Scene 5
+
+Reader edits.
+
+Clicks Publish.
+
+---
+
+## Scene 6
+
+The Story Universe changes.
+
+The Lineage Tree grows.
+
+Community feed updates.
+
+Story Passport statistics increase.
+
+Creative Capital increases.
+
+---
+
+## Final Sentence
+
+> "Books no longer end."
+
+Pause.
+
+> **"They evolve."**
+
+---
+
+# That is the MVP
+
+Everything else is secondary.
+
+---
+
+# Architecture
+
+Only implement what is needed.
+
+```text
+React + Next.js
+
+↓
+
+Vercel
+
+↓
+
+Supabase
+
+↓
+
+Gemini
+
+↓
+
+Storage
+
+↓
+
+Embeddings
+
+↓
+
+Story Portal
+```
+
+Nothing else.
+
+---
+
+# Gemini Responsibilities
+
+Gemini should only perform six jobs.
+
+## Story Understanding
+
+↓
+
+## Story DNA
+
+↓
+
+## Creative Planning
+
+↓
+
+## Draft Generation
+
+↓
+
+## Editorial Review
+
+↓
+
+## Continuity Validation
+
+That is enough.
+
+---
+
+# React Responsibilities
+
+React only shows
+
+Story Portal
+
+↓
+
+Story Passport
+
+↓
+
+Story Workspace
+
+↓
+
+Lineage Tree
+
+↓
+
+Community
+
+Nothing else.
+
+---
+
+# Supabase Responsibilities
+
+Authentication
+
+↓
+
+Storage
+
+↓
+
+Database
+
+↓
+
+Edge Functions
+
+↓
+
+Vector Search
+
+↓
+
+Realtime
+
+Keep it clean.
+
+---
+
+# Backend Responsibilities
+
+Only these workflows.
+
+```text
+Upload
+
+↓
+
+Analyze
+
+↓
+
+Create Passport
+
+↓
+
+Create Embeddings
+
+↓
+
+QR
+
+↓
+
+Reader
+
+↓
+
+Continue Story
+
+↓
+
+Publish Lineage
+```
+
+---
+
+# AI Organization
+
+Do not implement thirty agents.
+
+Implement only six.
+
+## Story Analyst
+
+↓
+
+Creative Planner
+
+↓
+
+Context Builder
+
+↓
+
+Writer
+
+↓
+
+Reviewer
+
+↓
+
+Publisher
+
+Everything else becomes Beta.
+
+---
+
+# What We Must Finish
+
+## Week 1
+
+Backend complete.
+
+---
+
+## Week 2
+
+Story Portal complete.
+
+---
+
+## Week 3
+
+Gemini integration.
+
+---
+
+## Week 4
+
+Story Lineage.
+
+---
+
+## Week 5
+
+Demo polish.
+
+---
+
+## Week 6
+
+Testing.
+
+Video.
+
+Pitch.
+
+---
+
+# Deliverables
+
+The submission package should contain:
+
+## Working Web Application
+
+The judges can use it.
+
+---
+
+## 3-Minute Demo Video
+
+Professional.
+
+---
+
+## Architecture Diagram
+
+Simple.
+
+Beautiful.
+
+---
+
+## One-page Executive Summary
+
+One page only.
+
+---
+
+## GitHub Repository
+
+Well documented.
+
+---
+
+## Live URL
+
+Fast.
+
+Reliable.
+
+---
+
+# The Judge's Memory
+
+After the presentation,
+
+if they remember one sentence,
+
+it should be:
+
+> **"This team transformed books into living ecosystems powered by Gemini."**
+
+Not:
+
+> "They used React."
+
+Not:
+
+> "They used Supabase."
+
+Not:
+
+> "They built an AI."
+
+---
+
+# My Biggest Strategic Advice
+
+Ivan, after following this project from its earliest ideas to what it has become today, I think there is one principle that should guide every remaining decision.
+
+**Don't try to demonstrate everything byDebut will become. Demonstrate one experience so compelling that the judges immediately believe the rest is inevitable.**
+
+The architecture we've created is your competitive foundation. The MVP is simply the smallest window through which the judges can clearly see that future.
+
+---
+
+# I recommend one final strategic shift
+
+From this point forward, I would stop thinking in terms of **features**.
+
+Instead, organize every sprint around **moments**.
+
+For the XPRIZE MVP, there are only **seven moments that matter**:
+
+1. **Finish the book.**
+2. **Scan the QR code.**
+3. **Enter the Story Portal.**
+4. **Watch Gemini understand the story.**
+5. **Create a new Story Lineage.**
+6. **Publish it into the Living Story Universe.**
+7. **See the universe evolve instantly.**
+
+If those seven moments are beautiful, fast, emotionally engaging, and technically solid, I believe you will have created a demonstration that is not just memorable—it will clearly communicate why byDebut exists and why Gemini is essential to making it possible. I would make every line of code, every UI decision, and every AI workflow serve one of those seven moments.
