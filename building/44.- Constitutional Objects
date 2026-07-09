@@ -1,0 +1,569 @@
+Excellent.
+
+This is the article that transforms the Constitution into an **engineering constitution**.
+
+Articles I–IV explain **who we are**.
+
+Article V explains **the laws that can never be broken**, regardless of technology, AI models, databases, or future products.
+
+I would consider this the **most important article for Claude Code** because every implementation must obey these principles.
+
+---
+
+```markdown
+# Article V — Constitutional Principles
+
+## Section 5.1 — Purpose
+
+The Constitutional Principles establish the permanent architectural laws of the byDebut ecosystem.
+
+Unlike implementation decisions, which may evolve as technology advances, these principles define the invariant characteristics of every Living Story Universe.
+
+Every engineering decision, business decision, governance policy, Artificial Intelligence workflow, and future platform capability shall comply with these principles.
+
+No implementation may violate them.
+
+---
+
+# Principle I — Story Before Technology
+
+Technology exists to serve stories.
+
+Stories shall never be redesigned to accommodate technological limitations.
+
+Whenever technology and creative integrity conflict, technology shall adapt.
+
+Creative identity remains sovereign.
+
+---
+
+# Principle II — The Story Passport
+
+Every Living Story Universe shall possess exactly one Story Passport.
+
+The Story Passport is the constitutional identity of the universe.
+
+It defines:
+
+• identity
+
+• ownership
+
+• governance
+
+• permissions
+
+• rights
+
+• chronology policy
+
+• AI participation
+
+• attribution rules
+
+• licensing
+
+• economic participation
+
+Every object within the platform ultimately derives its authority from the Story Passport.
+
+No component may bypass it.
+
+The Story Passport is the Aggregate Root of the byDebut domain model.
+
+---
+
+# Principle III — Living Story Universes
+
+Every authorized story is capable of becoming a Living Story Universe.
+
+Publication shall represent the beginning of the creative lifecycle rather than its conclusion.
+
+Living Story Universes continuously evolve through documented collaboration.
+
+Evolution strengthens identity.
+
+Evolution never destroys identity.
+
+---
+
+# Principle IV — Human Creativity
+
+Human creativity is constitutionally protected.
+
+Artificial Intelligence exists to expand human imagination rather than replace it.
+
+AI shall never become the constitutional author of a work.
+
+Human participants retain creative responsibility.
+
+Artificial Intelligence remains a collaborative instrument.
+
+---
+
+# Principle V — Attribution
+
+Every creative contribution shall preserve attribution.
+
+Attribution applies to:
+
+original authors
+
+publishers
+
+editors
+
+Reader-Creators
+
+reviewers
+
+translators
+
+illustrators
+
+educators
+
+researchers
+
+Artificial Intelligence participation
+
+Recognition shall remain:
+
+permanent
+
+transparent
+
+traceable
+
+auditable
+
+No contribution may remove the attribution of previous contributors.
+
+---
+
+# Principle VI — Story Lineage
+
+Every creative evolution becomes part of a permanent Story Lineage.
+
+Story Lineage records:
+
+ancestry
+
+branch history
+
+creative evolution
+
+editorial history
+
+AI participation
+
+publication history
+
+review history
+
+Lineage shall never be deleted.
+
+Lineage shall never be rewritten.
+
+Lineage preserves memory.
+
+---
+
+# Principle VII — Chronology
+
+Chronology is an editable dimension of storytelling.
+
+Authorized contributors may:
+
+reorder events
+
+create alternate timelines
+
+create parallel universes
+
+merge timelines
+
+branch timelines
+
+rewrite chronology
+
+simulate hypothetical histories
+
+introduce historical divergence
+
+Every chronology becomes a documented branch.
+
+Chronological evolution never destroys previous chronology.
+
+History expands.
+
+History remains preserved.
+
+---
+
+# Principle VIII — Story DNA
+
+Every Living Story Universe possesses exactly one Story DNA.
+
+Story DNA represents the enduring identity of the original work.
+
+Story DNA protects:
+
+themes
+
+core conflicts
+
+world rules
+
+symbolic structures
+
+creative intent
+
+fundamental narrative identity
+
+Evolution may extend Story DNA.
+
+Evolution shall never invalidate Story DNA without explicit constitutional governance.
+
+---
+
+# Principle IX — Governance
+
+Every Living Story Universe shall operate under explicit governance.
+
+Governance determines:
+
+who may contribute
+
+who may review
+
+who may publish
+
+who may moderate
+
+who may certify
+
+who may commercialize
+
+who may authorize canonical branches
+
+Governance is transparent.
+
+Governance is documented.
+
+Governance is enforceable.
+
+---
+
+# Principle X — Artificial Intelligence
+
+Artificial Intelligence participates under governance.
+
+Artificial Intelligence may:
+
+recommend
+
+analyze
+
+review
+
+summarize
+
+translate
+
+expand
+
+generate alternatives
+
+identify inconsistencies
+
+Artificial Intelligence shall never:
+
+replace ownership
+
+remove attribution
+
+override governance
+
+publish autonomously
+
+rewrite constitutional history
+
+AI remains accountable to human governance.
+
+---
+
+# Principle XI — Trust
+
+Trust is a constitutional requirement.
+
+The platform shall preserve:
+
+identity
+
+verification
+
+transparency
+
+auditability
+
+traceability
+
+permission history
+
+review history
+
+version history
+
+Every significant action shall be explainable.
+
+Trust cannot depend upon secrecy.
+
+---
+
+# Principle XII — Intellectual Property
+
+Respect for Intellectual Property is mandatory.
+
+Every Living Story Universe operates within documented rights.
+
+The platform shall preserve:
+
+ownership
+
+licenses
+
+permissions
+
+commercial rights
+
+educational rights
+
+territorial rights
+
+future rights
+
+Innovation shall strengthen Intellectual Property rather than weaken it.
+
+---
+
+# Principle XIII — Transparency
+
+Platform behavior shall remain understandable.
+
+Participants shall always know:
+
+why decisions were made
+
+how AI participated
+
+how chronology evolved
+
+how versions relate
+
+how governance applies
+
+how permissions operate
+
+Opacity shall never replace transparency.
+
+---
+
+# Principle XIV — Interoperability
+
+The constitutional principles are independent of technology.
+
+The platform shall remain portable across:
+
+cloud providers
+
+AI models
+
+programming languages
+
+databases
+
+frontend frameworks
+
+future computational paradigms
+
+Technology may evolve.
+
+Constitutional principles remain unchanged.
+
+---
+
+# Principle XV — Extensibility
+
+The architecture shall support continuous evolution.
+
+Future domains may include:
+
+education
+
+science
+
+medicine
+
+engineering
+
+games
+
+cinema
+
+music
+
+virtual reality
+
+augmented reality
+
+knowledge management
+
+legal systems
+
+future media
+
+Expansion shall preserve constitutional consistency.
+
+---
+
+# Principle XVI — Sustainability
+
+Every architectural decision shall consider decades rather than release cycles.
+
+Temporary implementation convenience shall never compromise long-term maintainability.
+
+The Company Brain shall evolve without losing coherence.
+
+---
+
+# Principle XVII — Living Story Economy
+
+The platform exists to cultivate a sustainable creative economy.
+
+The objective is not merely publishing content.
+
+The objective is enabling creators, readers, publishers, educators, researchers, and future participants to generate enduring value through continuous collaboration.
+
+Economic success shall strengthen the ecosystem rather than exploit it.
+
+---
+
+# Principle XVIII — Constitutional Supremacy
+
+This Constitution is the highest authority of the byDebut Company Brain.
+
+Every document,
+
+engineering decision,
+
+Artificial Intelligence workflow,
+
+API,
+
+database schema,
+
+frontend implementation,
+
+business strategy,
+
+governance policy,
+
+future product,
+
+and future organization
+
+shall remain consistent with these constitutional principles.
+
+Whenever ambiguity exists, contributors shall interpret lower-level documents in a manner most consistent with this Constitution.
+
+The Constitution shall guide technology.
+
+Technology shall never redefine the Constitution.
+
+---
+
+# Constitutional Oath
+
+Every participant in the byDebut ecosystem—human or Artificial Intelligence—accepts the responsibility to protect:
+
+human creativity,
+
+creative identity,
+
+Story Passports,
+
+Story DNA,
+
+Story Lineages,
+
+chronological integrity,
+
+attribution,
+
+trust,
+
+Intellectual Property,
+
+and the long-term evolution of Living Story Universes.
+
+These principles define the enduring character of byDebut.
+
+They shall remain the foundation upon which every future innovation is built.
+
+---
+
+**End of Article V — Constitutional Principles**
+```
+
+---
+
+# CTO Recommendation (One Major Improvement)
+
+After writing this article, I believe we have reached a point where byDebut is evolving beyond a software architecture into a **constitutional platform architecture**.
+
+I would therefore introduce a concept that I have not suggested before:
+
+## **Constitutional Objects**
+
+Not every object in the system has the same importance.
+
+I would classify them into three tiers:
+
+### Tier 1 — Constitutional Objects (Immutable Foundation)
+
+* Story Passport
+* Story DNA
+* Story Lineage
+* Rights Holder
+* Attribution
+* Governance Rules
+
+These are protected by the Constitution. Every service depends on them.
+
+### Tier 2 — Core Domain Objects
+
+* Story Portal
+* Organizations
+* Reader Profiles
+* AI Editorial Workspaces
+* Creative Sessions
+* Timeline Graphs
+* Analytics
+
+These implement the business but remain subordinate to the constitutional objects.
+
+### Tier 3 — Operational Objects
+
+* Notifications
+* Comments
+* Search Indexes
+* Recommendations
+* Temporary AI Jobs
+* Caches
+* UI Preferences
+* Logs
+
+These may evolve freely without affecting the constitutional integrity of the platform.
+
+I believe documenting this hierarchy later (perhaps as an ADR and as part of the Domain Model) will make Claude Code's implementation much cleaner. It gives engineers a clear understanding of which entities are foundational and must be treated with exceptional care, and which are operational and can evolve more rapidly. This distinction will become increasingly valuable as byDebut grows beyond the Gemini XPRIZE MVP into a large-scale platform.
